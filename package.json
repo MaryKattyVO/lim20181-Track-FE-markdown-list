@@ -1,0 +1,32 @@
+{
+  "name": "lim20181-track-fe-markdown-list",
+  "version": "1.0.0",
+  "description": "[Markdown](https://es.wikipedia.org/wiki/Markdown) es un lenguaje de marcado\r ligero muy popular entre developers. Es usado en muchísimas plataformas que\r manejan texto plano (GitHub, foros, blogs, ...), y es muy común\r encontrar varios archivos en ese formato en cualquier tipo de repositorio\r (empezando por el tradicional `README.md`).",
+  "main": "cli.js",
+  "directories": {
+    "test": "test"
+  },
+  "bin": {
+    "md-Links": "cli.js"
+  },
+  "dependencies": {
+    "colors": "^1.3.1",
+    "express": "^4.16.3",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaryKattyVO/lim20181-Track-FE-markdown-list.git"
+  },
+  "author": "Mary Katty Vicuña Ore <mkvicunaore@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaryKattyVO/lim20181-Track-FE-markdown-list/issues"
+  },
+  "homepage": "https://github.com/MaryKattyVO/lim20181-Track-FE-markdown-list#readme"
+}
