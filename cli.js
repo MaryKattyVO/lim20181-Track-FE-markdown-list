@@ -11,12 +11,12 @@ program
       validate: false,
       stats: false
     };
-		//si recibe comando --validate, cambia a true el options.validate
+		//--validate
 		if (program.validate) {
 			options.validate = true;
 		}
 
-		//si recibe comando --stats, cambia a true el options.stats
+		//--stats
 		if (program.stats) {
 			options.stats = true;
 		}
