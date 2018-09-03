@@ -1,55 +1,26 @@
-#!/usr/bin/env node
-const fs = require('fs');
+#!/usr/bin/env node 
+const mdlinks = require('./index');
+const program = require('commander');
 
+program
+  .option('--validate', 'Validar')
+	.option('--stats', 'Mostrar stats')
+	//.action(mdlinks)
+	.action((file, commands) => {
+    const options = {
+      validate: false,
+      stats: false
+    };
+		//si recibe comando --validate, cambia a true el options.validate
+		if (program.validate) {
+			options.validate = true;
+		}
 
-const [,, ...args] = process.argv;
-const path = require('path').resolve(args[0]);
+		//si recibe comando --stats, cambia a true el options.stats
+		if (program.stats) {
+			options.stats = true;
+		}
 
-
-//Definir si es carpeta o archivo
-const verifiedDir=(files,arr)=>{
-  arr= arr || [];
-  fs.readdir(files,(err, data) => {
-    data.forEach(file => {
-      fs.stat(files,(err, stats) => {
-        if (err) {
-          throw("Error");
-            
-        }
-        else {
-          if(stats.isDirectory())
-          {
-            console.log(files + "es carpeta");
-          }
-          else if(stats.isFile())
-          {
-            console.log(files + "es archivo");
-          }
-        }
-      })
-    })
-  })
-}
-
-verifiedDir(path);
-// // leer archivo de forma sincrona
-
-//     fs.readFile(path(args[0]), 'utf-8', (err, data) => {
-//       if(err) {
-//         console.log('error: ', err);
-//       } else {
-//         console.log(data);
-//       }
-//     });
-
-//     fs.readdir(path(args[0]), 'utf-8', (err, data) => {
-//       if(err) {
-//         console.log('error: ', err);
-//       } else {
-//         console.log(data);
-//       }
-//     });
-//     // let archivo = fs.readFileSync('archivo2.txt', 'utf-8');
-//     console.log(archivo);
-
- 
+		mdlinks(file, options);
+	})
+	.parse(process.argv);
