@@ -11,11 +11,22 @@ let broken = 0;
 let valid = 0;
 let promises = [];
 let results = [];
-let arrayFromLinks = [];
-let arrayFromLinksDuplicates = [];
+let Links = [];
+let LinksDuplicates = [];
 
+//-------------------------- Función: Convertir ruta relativa a absoluta ---------------------
+const convertAbsolutePath = (route) => {
+  absolute = path.resolve(route);
+  return absolute;
+}
 
-// Función: Leer archivo.
+//------------------------- Función: existe ruta ---------------------------------------------
+const existRoute = (route) => {
+  routeExist = fs.statSync(route);
+  return routeExist;
+}
+
+//------------------------- Función: Leer archivo.-------------------------------------------
 const readFiles = (route) => {
   // Ruta entrante convertida a Absoluta. 
   let pathAbsolute = convertAbsolutePath(route);
@@ -37,19 +48,7 @@ const readFiles = (route) => {
   }
 };
 
-// Función: Convertir ruta relativa a absoluta
-const convertAbsolutePath = (route) => {
-  absolute = path.resolve(route);
-  return absolute;
-}
-
-// Función: existe ruta
-const existRoute = (route) => {
-  routeExist = fs.statSync(route);
-  return routeExist;
-}
-
-// Función: Verificación de opcion 
+//----------------------------  Función: Verificación de opcion -----------------------------------------------
 const verificationFile = (completePath, fileName) => {
   const extensionMd = validateFileMd(completePath);
   if (extensionMd === true) {
@@ -58,7 +57,7 @@ const verificationFile = (completePath, fileName) => {
     // Separar el contenido en lineas
     const lines = information.split('\n');
     // Recorrido por cada linea
-    loopInformationFile(lines, fileName);
+    loop(lines, fileName);
     // Promises
     Promise.all(promises)
     .then(() => {
@@ -78,8 +77,24 @@ const verificationFile = (completePath, fileName) => {
         };
         results.push(result);
       }
-      showStast();
-      convertNull();
+      if(options.stats === true){
+        console.log('');
+        console.log('**************************************************************');
+        console.log('           Resultados de Link Encontrados                     ');
+        console.log('**************************************************************');
+        console.log('=> Total Links = '+ total);
+        console.log('=> Unicos      = ' + unique);
+        if(options.stats === true && options.validate === true){
+        console.log('=> rotos       = '+ broken);
+        }
+      }
+      total = 0;
+      broken = 0;
+      valid = 0;
+      unique = 0;
+      Links = [];
+      LinksDuplicates = [];
+      promises = [];
     });
   } else {
       return 'No se verifica extensiòn .md'
@@ -87,18 +102,7 @@ const verificationFile = (completePath, fileName) => {
 }
 
 
-// Función: Resetear variables:
-const convertNull = () => {
-  total = 0;
-  broken = 0;
-  valid = 0;
-  unique = 0;
-  arrayFromLinks = [];
-  arrayFromLinksDuplicates = [];
-  promises = [];
-};
-
-// Función: Verifica si es una extensión Md.
+//------------------------------ Función: Verifica si es una extensión Md. --------------------------------------
 const validateFileMd = (file) => {
   // String.lastIndexOf() el método devuelve la última aparición del valor especificado ('.' en este caso). 
   // Devuelve -1 si no se encuentra el valor.
@@ -116,25 +120,25 @@ const validateFileMd = (file) => {
 	}
 }
 
-// Función: Verifica si existe archivo 
+//-----------------------------  Función: Verifica si existe archivo ------------------------------------------
 const existFile = (file) => {
   const existFiles = fs.existsSync(file)
   return existFiles;
 };
 
-// Función: Obtener contenido del archivo
+//---------------------- Función: Obtener contenido del archivo -----------------------------------------------
 const getInformationFile = (file) => {
   const informationFile = fs.readFileSync(file, 'utf8');
   return informationFile;
 }
-//-- Iterar contenido del archivo
-const loopInformationFile = (lines, file ) => {
+//---------------------- Iterar contenido del archivo --------------------------------------------------------
+const loop = (lines, file ) => {
   for (let line of lines){
     searchUrl(line, file);
   }
 };
 
-//-- Funciòn: Encontrar URL:
+//-------------------- Funciòn: Encontrar URL:--------------------------------------------------------------
 const searchUrl = (line, file) => {
   const urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
   line.replace(urlRegex, (url) => {
@@ -143,19 +147,19 @@ const searchUrl = (line, file) => {
     // Verificar si la url funciona. 
     validateUrl(url, urlText, file);
     // URl repetidos en el arreglo.
-    if (arrayFromLinks.indexOf(url) === -1) {
-      arrayFromLinks.push(url);
+    if (Links.indexOf(url) === -1) {
+      Links.push(url);
     } else {
-        if (arrayFromLinksDuplicates.indexOf(url) === -1){
-          arrayFromLinksDuplicates.push(url);
+        if (LinksDuplicates.indexOf(url) === -1){
+          LinksDuplicates.push(url);
           
         }
       }
   });
-  unique = arrayFromLinks.length - arrayFromLinksDuplicates.length;
+  unique = Links.length - LinksDuplicates.length;
 };
 
-// Función: Obtener el texto de la URL.
+//------------------ Función: Obtener el texto de la URL.---------------------------------------------------
 const getUrlText = (line) => {
   const urlLineText = line.substring(
     line.lastIndexOf( '[' ) + 1,
@@ -164,27 +168,25 @@ const getUrlText = (line) => {
   return urlLineText;
 }
 
-// Función: Validando URL 
+//------------------------- Función: Validando URL ----------------------------------------------------------
 const validateUrl = (url, urlText, file) => {
 	let promise = fetch(url)
 	.then((response) => {
-		switch(response.statusText) {
-			case 'OK':
-				if (options.validate === true) {
-					console.log(url + ' ok ' + response.status + ' ' + urlText);
-				}
-				else {
-					console.log(url);
-				}
-				valid++;
-				break;
-			case 'Not Found':
-				if (options.validate === true) {
-					console.log(url + ' fail ' + response.status + ' ' + urlText);
-				}
-				broken++;
-				break;
-		}
+    if(response.statusText === 'OK'){
+      if (options.validate === true) {
+        console.log(url + ' ok ' + response.status + ' ' + urlText);
+      }
+      else {
+        console.log(url);
+      }
+      valid = valid + 1;
+    }else if(response.statusText === 'Not Found'){
+      if (options.validate === true) {
+        console.log(url + ' fail ' + response.status + ' ' + urlText);
+      }
+      broken = broken +1;
+     
+    }
 		
 		if (options.validate === true && options.stats === false) {
 			let result = {
@@ -208,22 +210,6 @@ const validateUrl = (url, urlText, file) => {
 	.catch((error) => {
 	});
 	promises.push(promise);
-};
-
-// Función: Muestra Resultados de link encontrados.
-const showStast = () => {
-  if(options.stats === true){
-    console.log('');
-    console.log('**************************************************************');
-    console.log('           Resultados de Link Encontrados                     ');
-    console.log('**************************************************************');
-    console.log('=> Total Links = '+ total);
-    console.log('=> Validos     = '+ valid);
-    console.log('=> Unicos      = ' + unique);
-    if(options.stats === true && options.validate === true){
-    console.log('=> rotos       = '+ broken);
-    }
-  }
 };
 
 const mdlinks = (route, optionsConsole) => {
