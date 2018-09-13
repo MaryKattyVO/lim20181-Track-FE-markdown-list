@@ -3,24 +3,46 @@ const mdlinks = require('./index');
 const program = require('commander');
 
 program
-  .option('--validate', 'Validar')
-	.option('--stats', 'Mostrar stats')
-	//.action(mdlinks)
-	.action((file, commands) => {
-    const options = {
-      validate: false,
-      stats: false
-    };
-		//--validate
-		if (program.validate) {
-			options.validate = true;
-		}
+.option('-v, --validate', 'Validates')
+.option('-s, --stats', 'statss')
+.action((file) => {
+	const options = {
+		validate: false,
+		stats: false
+	};
 
-		//--stats
-		if (program.stats) {
-			options.stats = true;
-		}
+	if (program.validate) {
+		options.validate = true;
+	}
 
-		mdlinks(file, options);
-	})
-	.parse(process.argv);
+	if (program.stats) {
+		options.stats = true;
+	}
+ 
+	mdlinks(file, options)
+	.then((result) => {
+		result.map((data) => {
+			if (options.validate === true && options.stats === false) {
+				
+				if (data.status === 'OK') {
+					console.log(`${data.file} ${data.href} ${data.status} ${data.text}`);
+				} else {
+					console.log(`${data.file} + ' ' + ${data.href} + ' - fail ' + ${data.text}`);
+				}
+			} else if (options.validate === false && options.stats === false) {
+
+				console.log(`${data.file} + ' ' + ${data.href} + ' ' + ${data.text}`);
+			} else if (options.validate === false && options.stats === true) {
+				console.log('Estadisticas para este archivo');
+				console.log('total: ' + `${data.total}`);
+				console.log('unicos: ' + `${data.unique}`);
+			} else if (options.validate === true && options.stats === true) {
+				console.log('Estadisticas para este archivo');
+				console.log('total: ' + `${data.total}`);
+				console.log('unicos: ' + `${data.unique}`);
+				console.log('rotos: ' + `${data.broken}`);
+			}
+		});
+	});
+})
+.parse(process.argv);
