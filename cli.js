@@ -2,45 +2,47 @@
 const mdlinks = require('./index');
 const program = require('commander');
 
+let options = {
+	validate: false,
+	stats: false
+};
+
 program
-.option('-v, --validate', 'Validates')
-.option('-s, --stats', 'statss')
-.action((file) => {
-	const options = {
-		validate: false,
-		stats: false
-	};
+.arguments('<path>')
+.option('-v, --validate', 'Validar si Links estan válidos o rotos')
+.option('-s, --stats', 'Mostrar estado de los links')
+.action((path) => {
 
 	if (program.validate) {
 		options.validate = true;
 	}
-
 	if (program.stats) {
 		options.stats = true;
 	}
- 
-	mdlinks(file, options)
+	mdlinks(path, options)
 	.then((result) => {
 		result.map((data) => {
-			if (options.validate === true && options.stats === false) {
-				
-				if (data.status === 'OK') {
-					console.log(`${data.file} ${data.href} ${data.status} ${data.text}`);
-				} else {
-					console.log(`${data.file} + ' ' + ${data.href} + ' - fail ' + ${data.text}`);
-				}
-			} else if (options.validate === false && options.stats === false) {
 
-				console.log(`${data.file} + ' ' + ${data.href} + ' ' + ${data.text}`);
-			} else if (options.validate === false && options.stats === true) {
-				console.log('Estadisticas para este archivo');
-				console.log('total: ' + `${data.total}`);
-				console.log('unicos: ' + `${data.unique}`);
-			} else if (options.validate === true && options.stats === true) {
-				console.log('Estadisticas para este archivo');
-				console.log('total: ' + `${data.total}`);
-				console.log('unicos: ' + `${data.unique}`);
-				console.log('rotos: ' + `${data.broken}`);
+			if (!options.validate && !options.stats) {
+				console.log(`${data.file}\t${data.href}\t${data.text}`);
+			} else if (options.validate && options.stats) {
+				console.log('**************************************************')
+				console.log('Resultado estados links');
+				console.log('--------------------------------------------------')
+				console.log(`Total:\t${data.total}\nUnicos:\t${data.unique}\nRotos:\t${data.broken}`);
+				console.log('**************************************************')
+			} else if (!options.validate && options.stats) {
+				console.log('**************************************************')
+				console.log('Resultado estados links');
+				console.log('--------------------------------------------------')
+				console.log(`Total:\t${data.total}\nUnicos:\t${data.unique}`);
+				console.log('**************************************************')
+			} else if (options.validate && !options.stats) {
+				if (data.status === 'OK') {
+					console.log(`${data.file}\t${data.href}\t${data.status}\t200\t${data.text}`);
+				} else {
+					console.log(`${data.file}\t${data.href}\t${data.status}\t404\t${data.text}`);
+				}
 			}
 		});
 	});

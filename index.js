@@ -13,6 +13,15 @@ let unique = 0;
 const promises = [];
 const results = [];
 
+//----------------------- Función que permite convertir una ruta a Absoluta -------------------
+const convertAbsolute = (route) => {
+	return path.resolve(route);
+}
+
+//--------------------- Función que permite verificar estado de la routa ----------------------
+const verificationRoute = (routeAbsolute) => {
+	return fs.statSync(routeAbsolute);
+}
 
 //--------------------- Función que permite leer archivo -------------------------------
 const readFile = (route) => {
@@ -53,16 +62,6 @@ const fileExists = (files) => {
 		return exist = true;
 	}
 };
-
-//----------------------- Función que permite convertir una ruta a Absoluta -------------------
-const convertAbsolute = (route) => {
-	return path.resolve(route);
-}
-
-//--------------------- Función que permite verificar estado de la routa ----------------------
-const verificationRoute = (routeAbsolute) => {
-	return fs.statSync(routeAbsolute);
-}
 
 //-------------------- Función que verifica estado de directorio -----------------------------
 const verificationDir = (routeAbsolute) => {
