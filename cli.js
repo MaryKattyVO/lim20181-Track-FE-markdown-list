@@ -2,25 +2,49 @@
 const mdlinks = require('./index');
 const program = require('commander');
 
+let options = {
+	validate: false,
+	stats: false
+};
+
 program
-  .option('--validate', 'Validar')
-	.option('--stats', 'Mostrar stats')
-	//.action(mdlinks)
-	.action((file, commands) => {
-    const options = {
-      validate: false,
-      stats: false
-    };
-		//--validate
-		if (program.validate) {
-			options.validate = true;
-		}
+.arguments('<path>')
+.option('-v, --validate', 'Validar si Links estan válidos o rotos')
+.option('-s, --stats', 'Mostrar estado de los links')
+.action((path) => {
 
-		//--stats
-		if (program.stats) {
-			options.stats = true;
-		}
+	if (program.validate) {
+		options.validate = true;
+	}
+	if (program.stats) {
+		options.stats = true;
+	}
+	mdlinks(path, options)
+	.then((result) => {
+		result.map((data) => {
 
-		mdlinks(file, options);
-	})
-	.parse(process.argv);
+			if (!options.validate && !options.stats) {
+				console.log(`${data.file}\t${data.href}\t${data.text}`);
+			} else if (options.validate && options.stats) {
+				console.log('**************************************************')
+				console.log('Resultado estados links');
+				console.log('--------------------------------------------------')
+				console.log(`Total:\t${data.total}\nUnicos:\t${data.unique}\nRotos:\t${data.broken}`);
+				console.log('**************************************************')
+			} else if (!options.validate && options.stats) {
+				console.log('**************************************************')
+				console.log('Resultado estados links');
+				console.log('--------------------------------------------------')
+				console.log(`Total:\t${data.total}\nUnicos:\t${data.unique}`);
+				console.log('**************************************************')
+			} else if (options.validate && !options.stats) {
+				if (data.status === 'OK') {
+					console.log(`${data.file}\t${data.href}\t${data.status}\t200\t${data.text}`);
+				} else {
+					console.log(`${data.file}\t${data.href}\t${data.status}\t404\t${data.text}`);
+				}
+			}
+		});
+	});
+})
+.parse(process.argv);

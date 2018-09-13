@@ -1,229 +1,192 @@
-// Pidiendo módulos a usar de Node.js.
+//-------------- Obteniendo métodos con require -----------------------------------------
 const fs = require('fs');
-const path = require('path');
 const fetch = require('node-fetch');
+const path = require('path');
 
-// Declarando variables globales:  
 let options = {};
 let total = 0;
-let unique = 0;
-let broken = 0;
 let valid = 0;
-let promises = [];
-let results = [];
-let Links = [];
-let LinksDuplicates = [];
+let broken = 0;
+const link = [];
+const linkDuplex = [];
+let unique = 0;
+const promises = [];
+const results = [];
 
-//-------------------------- Función: Convertir ruta relativa a absoluta ---------------------
-const convertAbsolutePath = (route) => {
-  absolute = path.resolve(route);
-  return absolute;
+//----------------------- Función que permite convertir una ruta a Absoluta -------------------
+const convertAbsolute = (route) => {
+	return path.resolve(route);
 }
 
-//------------------------- Función: existe ruta ---------------------------------------------
-const existRoute = (route) => {
-  routeExist = fs.statSync(route);
-  return routeExist;
+//--------------------- Función que permite verificar estado de la routa ----------------------
+const verificationRoute = (routeAbsolute) => {
+	return fs.statSync(routeAbsolute);
 }
 
-//------------------------- Función: Leer archivo.-------------------------------------------
-const readFiles = (route) => {
-  // Ruta entrante convertida a Absoluta. 
-  let pathAbsolute = convertAbsolutePath(route);
-  // Lee ruta para saber si pertenece a un archivo o directorio. 
-  const statsFile = existRoute(pathAbsolute);
-  // Condicional: Si es un archivo. 
-  if (statsFile.isFile() === true) {
-    // Verificando si existe archivo.
-    const existFiles = existFile(pathAbsolute);
-    // Return existFiles;
-    if (existFiles === true) {
-      verificationFile(pathAbsolute, route);
-    }
-  } else if (statsFile.isDirectory() === true) {
-      let files = fs.readdirSync(pathAbsolute);
-      files.map((file) => {
-      readFiles(route + '/' + file);
-    });
-  }
-};
+//--------------------- Función que permite leer archivo -------------------------------
+const readFile = (route) => {
+	const pathAbsolute = convertAbsolute(route);
+	const statsFile = verificationRoute(pathAbsolute);
+	if (statsFile.isFile()) {
+		const exist = fileExists(pathAbsolute); 
+		if (exist) {
+			recorredFile(pathAbsolute, route);
+		}
+	} else if (statsFile.isDirectory()) { 
+		const files = verificationDir(pathAbsolute);
 
-//----------------------------  Función: Verificación de opcion -----------------------------------------------
-const verificationFile = (completePath, fileName) => {
-  const extensionMd = validateFileMd(completePath);
-  if (extensionMd === true) {
-    // Si opción es: "--validate"
-    const information = getInformationFile(completePath);
-    // Separar el contenido en lineas
-    const lines = information.split('\n');
-    // Recorrido por cada linea
-    loop(lines, fileName);
-    // Promises
-    Promise.all(promises)
-    .then(() => {
-      total = valid + broken;
-
-      if (options.validate === false && options.stats === true) {
-        let result = {
-          total: total,
-          unique: unique
-        };
-        results.push(result);
-      } else if (options.validate === true && options.stats === true) {
-          let result = {
-            total: total,
-            unique: unique,
-            broken: broken
-        };
-        results.push(result);
-      }
-      if(options.stats === true){
-        console.log('');
-        console.log('**************************************************************');
-        console.log('           Resultados de Link Encontrados                     ');
-        console.log('**************************************************************');
-        console.log('=> Total Links = '+ total);
-        console.log('=> Unicos      = ' + unique);
-        if(options.stats === true && options.validate === true){
-        console.log('=> rotos       = '+ broken);
-        }
-      }
-      total = 0;
-      broken = 0;
-      valid = 0;
-      unique = 0;
-      Links = [];
-      LinksDuplicates = [];
-      promises = [];
-    });
-  } else {
-      return 'No se verifica extensiòn .md'
-  }
-}
-
-
-//------------------------------ Función: Verifica si es una extensión Md. --------------------------------------
-const validateFileMd = (file) => {
-  // String.lastIndexOf() el método devuelve la última aparición del valor especificado ('.' en este caso). 
-  // Devuelve -1 si no se encuentra el valor.
-  // Los valores de retorno de lastIndexOf para el parámetro 'filename' y 
-  // '.hiddenfile' son 0 y -1 respectivamente.Zero-fill operador de desplazamiento a
-  // la derecha (»>) transformará -1 a 4294967295 y -2 a 4294967294, aquí es un truco 
-  // para asegurar el nombre del archivo sin cambios en esos casos extremos.
-  // String.prototype.slice() extrae la extensión del índice que se calculó anteriormente.
-  // Si el índice es mayor que la longitud del nombre de archivo, el resultado es " ".
-  const extension = file.slice((file.lastIndexOf('.') - 1 >>> 0) + 2);
-	if (extension === 'md') {
-		return true;
-	} else {
-		return false;
+		files.map((file) => {
+			readFile(route + '/' + file);
+		});
 	}
-}
-
-//-----------------------------  Función: Verifica si existe archivo ------------------------------------------
-const existFile = (file) => {
-  const existFiles = fs.existsSync(file)
-  return existFiles;
 };
 
-//---------------------- Función: Obtener contenido del archivo -----------------------------------------------
-const getInformationFile = (file) => {
-  const informationFile = fs.readFileSync(file, 'utf8');
-  return informationFile;
-}
-//---------------------- Iterar contenido del archivo --------------------------------------------------------
-const loop = (lines, file ) => {
-  for (let line of lines){
-    searchUrl(line, file);
-  }
+//--------------- Función que permite recorrer archivo -------------------------------------
+const recorredFile = (route, nameFile) => {
+	const extension = validateMd(route);
+	if (extension === '.md') {
+		const information = getfileInformation(route);	
+		const linesFile = information.split('\n');
+		loopInformationFile(linesFile, nameFile);
+	}
 };
 
-//-------------------- Funciòn: Encontrar URL:--------------------------------------------------------------
-const searchUrl = (line, file) => {
-  const urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  line.replace(urlRegex, (url) => {
-    // Capturar texto de la url 
-    const urlText = getUrlText(line);
-    // Verificar si la url funciona. 
-    validateUrl(url, urlText, file);
-    // URl repetidos en el arreglo.
-    if (Links.indexOf(url) === -1) {
-      Links.push(url);
-    } else {
-        if (LinksDuplicates.indexOf(url) === -1){
-          LinksDuplicates.push(url);
-          
-        }
-      }
-  });
-  unique = Links.length - LinksDuplicates.length;
+//-------------------- Función para poder verificar extensión Md ----------------------------
+const validateMd = (file) => {
+	return path.extname(file);
+}; 
+
+//-------------------- Función que verifica que existe archivo ------------------------------
+const fileExists = (files) => {
+	if (fs.existsSync(files)) {
+		return exist = true;
+	}
 };
 
-//------------------ Función: Obtener el texto de la URL.---------------------------------------------------
-const getUrlText = (line) => {
-  const urlLineText = line.substring(
-    line.lastIndexOf( '[' ) + 1,
-    line.lastIndexOf( ']' )
-  );
-  return urlLineText;
+//-------------------- Función que verifica estado de directorio -----------------------------
+const verificationDir = (routeAbsolute) => {
+	return fs.readdirSync(routeAbsolute);
 }
 
-//------------------------- Función: Validando URL ----------------------------------------------------------
-const validateUrl = (url, urlText, file) => {
-	let promise = fetch(url)
-	.then((response) => {
-    if(response.statusText === 'OK'){
-      if (options.validate === true) {
-        console.log(url + ' ok ' + response.status + ' ' + urlText);
-      }
-      else {
-        console.log(url);
-      }
-      valid = valid + 1;
-    }else if(response.statusText === 'Not Found'){
-      if (options.validate === true) {
-        console.log(url + ' fail ' + response.status + ' ' + urlText);
-      }
-      broken = broken +1;
-     
-    }
+//------------------ Función que permite obtener contenido del archivo -----------------------
+const getfileInformation = (file) => {
+	const contents = fs.readFileSync(file, 'utf8');
+	return contents;
+}
+
+//----------------- Función que permite recorrer linea por linea file -----------------------------------
+const loopInformationFile = (linesfile, file) => {
+	for (let line of linesfile) {
+		searchUrl(line, file);
+	}
+};
+
+//------------------- Función que permite buscar Urls ---------------------------------------------------
+const searchUrl = (lineFile, file) => {
+	
+	const urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+
+	lineFile.replace(urlRegex, (urls) => {
+		const urlText = extractTextFlagUrl(lineFile);
+		//Permite validar si la url encontrada existe:
+		validateAllUrl(urls, urlText, file);
+		//Verifica si se repiten los urls:
+		if (link.indexOf(urls) === -1) { 
+				link.push(urls);
+		} else {
+			if (linkDuplex.indexOf(urls) === -1) {
+				linkDuplex.push(urls);
+			}
+		}
+	});
+	const lengthLink = link.length;
+	const lengthLinkDuplex = linkDuplex.length;
+	unique =  lengthLink - lengthLinkDuplex;
+};
+
+//--------------------- Función que permite extraer el texto de los links -----------------------------
+const extractTextFlagUrl = (lines) => {
+	const urlLineText = lines.substring(
+		lines.lastIndexOf('[') + 1, 
+		lines.lastIndexOf(']')
+	);
+	return urlLineText;
+};
+
+//----------------------- Función que permite validar las Urls ------------------------
+const validateAllUrl = (url, text, file) => {
+	const promise = fetch(url)
+	.then((res) => {
+		
+		// if(res.statusText === 'OK'){
+		// 	valid++;
+			
+		// }
+		// else if(res.statusText === 'NOT FOUND'){
+		// 	broken++;
+			
+		// }
+		switch(res.statusText) {
+			case 'OK':
+				valid++;
+				break;
+			default:
+				broken++;
+				break;
+		}
 		
 		if (options.validate === true && options.stats === false) {
 			let result = {
-        href: url, 
-        text: urlText, 
-        file: file, 
-        status: response.statusText
-      };
+				href: url, 
+				text: text, 
+				file: file, 
+				status: res.statusText
+			};
 			results.push(result);
-    } 
-    else if (options.validate === false && options.stats === false) {
+		} else if (options.validate === false && options.stats === false) {
 			let result = {
-        href: url, 
-        text: urlText, 
-        file: file
-      };
+				href: url, 
+				text: text, 
+				file: file
+			};
 			results.push(result);
 		}
 		
 	})
 	.catch((error) => {
+		return error;
 	});
+
 	promises.push(promise);
 };
 
-const mdlinks = (route, optionsConsole) => {
-  options = optionsConsole;
-  readFiles(route);
+//----------------------- Función mdLinks que recibe como parametro routa y opciones -------------
+const mdlinks = (route, option) => {
+	return new Promise(async (resolve, reject) => {
+		options = option;
+		readFile(route);
+		await Promise.all(promises)
+		.then(() => {
+			total = valid + broken;
 
-  return Promise.all(promises)
-  .then((response)=>{
-    let result = new Promise(() => {
-      return results;
-    });
-    return result;
-  });
+			if (options.validate === false && options.stats === true) {
+				let result = {
+					total: total, 
+					unique: unique
+				};
+				results.push(result);
+			} else if (options.validate === true && options.stats === true) {
+				let result = {
+					total: total, 
+					unique: unique, 
+					broken: broken
+				};
+				results.push(result);
+			}
+		});
+
+		return resolve(results);
+	});
 };
 
 module.exports = mdlinks;
-
