@@ -1,17 +1,52 @@
-/*const sum = require('./sum');
-test('adds 1+2 to equal 1',() => {
-    expect(sum(1,2)).toBe(3);
-});
-test('object assigment',() => {
-    const data = {one:1};
-    data['two'] = 2;
-    expect(data).toEqual({one:1,two: 2});
-});*/
-const mdLinks = require('./index.js');
-jest.setTimeout(300000);
-describe('Verificar si es una función',() => {
-    test('Validando que mdLinks es función', () => {
-        expect(typeof mdLinks).toEqual('function');
+const mdlinks = require('../index');
+
+let options = {
+    validate: false,
+    stats: false
+};
+
+describe('mdlinks', () => {
+    test('Deberia verificar una función', () => {
+        expect(typeof mdlinks).toEqual('function');
     });
+
+    test('Deberia retornar un arreglo vacio si no encuentra un archivo con extensión .Md', (done) => {
+        options.validate = false;
+        options.stats = false;
+
+        mdlinks('test.txt', options)
+        .then((data) => {
+            expect(JSON.stringify(data)).toEqual('[]');
+            done();
+        })
+    });
+
+    test('Deberia retornar una instancia de promesa', () => {
+        return expect(mdlinks('Readme.md', options)).toBeInstanceOf(Promise);
+    })
+
+    test('Deberia permitir ingresar un archivo y retornar un array de links',(done) => {
+        options.validate = false;
+        options.stats = false;
+
+        mdlinks('README.md', options)
+        .then((data) => {
+            expect(data[0].href).toEqual('https://nodejs.org/api/fs.html');
+            expect(data[0].text).toEqual('File System');
+            expect(data[0].file).toEqual('Readme.md');
+            done();
+        })
+    })
+    test('Ingresar Directorio y obtener los links "md-links ./test/testsMD --stats --validate"', () => {
+        jest.setTimeout(12000)
     
-})
+        options.stats = true;
+        options.validate = true;
+        return mdlinks('Readme.md', options) 
+        .then(result8=>{
+            console.log(result8);
+    
+            expect(result8).toBe("total:114\nunicos:0\nrotos:9");
+        })
+    });
+}) 
