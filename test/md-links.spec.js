@@ -24,29 +24,24 @@ describe('mdlinks', () => {
     test('Deberia retornar una instancia de promesa', () => {
         return expect(mdlinks('Readme.md', options)).toBeInstanceOf(Promise);
     })
-
-    test('Deberia permitir ingresar un archivo y retornar un array de links',(done) => {
-        options.validate = false;
+    test ('Deberia permitir ingresar una ruta y mostrar ruta, link y nombre del link',(done) => {
         options.stats = false;
-
-        mdlinks('README.md', options)
-        .then((data) => {
-            expect(data[0].href).toEqual('https://nodejs.org/api/fs.html');
-            expect(data[0].text).toEqual('File System');
-            expect(data[0].file).toEqual('Readme.md');
-            done();
+        options.validate = false;
+        return mdlinks('Readme.md',options)
+        .then(result => {
+            console.log(result);
+            expect(result).toBe("Readme.md\thttps://es.wikipedia.org/wiki/Markdown\tMarkdown");
         })
     })
-    test('Ingresar Directorio y obtener los links "md-links ./test/testsMD --stats --validate"', () => {
-        jest.setTimeout(12000)
-    
+    test('Deberia ingresar un directorio y obtener los links "md-links Readme.md  --stats --validate"', (done) => { 
         options.stats = true;
         options.validate = true;
         return mdlinks('Readme.md', options) 
-        .then(result8=>{
-            console.log(result8);
+        .then(result=>{
+            console.log(result);
     
-            expect(result8).toBe("total:114\nunicos:0\nrotos:9");
+            expect(result).toBe("total:38\nunicos:28\nrotos:3");
+            done();
         })
     });
 }) 
