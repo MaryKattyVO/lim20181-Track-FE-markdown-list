@@ -14,6 +14,8 @@ Esta libreria permite analizar archivos con extensión MD.Analiza el contenido y
 
 `md-links <path-to-file> [options]`
 
+Primera forma: `md-links <path-to-file>`
+
 `<path-to-file>:` Ruta de un archivo o directorio.
 
 Por ejemplo:
@@ -24,6 +26,8 @@ $ md-links ./some/example.md
 ./some/example.md https://otra-cosa.net/algun-doc.html algún doc
 ./some/example.md http://google.com/ Google
 ```
+
+Segunda forma: `md-links <path-to-file> [options]`
 
 `[options]`
 
