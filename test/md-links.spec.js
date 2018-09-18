@@ -4,12 +4,11 @@ let options = {
     validate: false,
     stats: false
 };
-
 describe('mdlinks', () => {
     test('Deberia verificar una función', () => {
-        expect(typeof mdlinks).toEqual('function');
+        expect(typeof mdlinks).toBe('function');
     });
-
+    
     test('Deberia retornar un arreglo vacio si no encuentra un archivo con extensión .Md', (done) => {
         options.validate = false;
         options.stats = false;
@@ -22,25 +21,75 @@ describe('mdlinks', () => {
     });
 
     test('Deberia retornar una instancia de promesa', () => {
-        return expect(mdlinks('Readme.md', options)).toBeInstanceOf(Promise);
+        return expect(mdlinks('testsEjemplo.md', options)).toBeInstanceOf(Promise);
     })
-    test ('Deberia permitir ingresar una ruta y mostrar ruta, link y nombre del link',(done) => {
-        options.stats = false;
-        options.validate = false;
-        return mdlinks('Readme.md',options)
-        .then(result => {
-            console.log(result);
-            expect(result).toBe("Readme.md\thttps://es.wikipedia.org/wiki/Markdown\tMarkdown");
+    test ('Deberia permitir ingresar una ruta archivo y mostrar ruta, link y nombre del link',(done) => {
+        return mdlinks('testsEjemplo.md',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}]);
+            done();
         })
-    })
-    test('Deberia ingresar un directorio y obtener los links "md-links Readme.md  --stats --validate"', (done) => { 
+    });
+    test ('Deberia permitir ingresar una ruta archivo y mostrar --stats',(done) => {
+        options.validate = false;
         options.stats = true;
+        return mdlinks('testsEjemplo.md',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}]);
+            done();
+        })
+    });
+    test ('Deberia permitir ingresar una ruta archivo  y mostrar --validate',(done) => {
         options.validate = true;
-        return mdlinks('Readme.md', options) 
-        .then(result=>{
-            console.log(result);
-    
-            expect(result).toBe("total:38\nunicos:28\nrotos:3");
+        options.stats = false;
+        return mdlinks('testsEjemplo.md',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}]);
+            done();
+        })
+    });
+    test ('Deberia permitir ingresar una ruta archivo y mostrar --validate -stats',(done) => {
+        options.validate = true;
+        options.stats = false;
+        return mdlinks('testsEjemplo.md',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}]);
+            done();
+        })
+    });
+    test ('Deberia permitir ingresar una ruta Directorio y mostrar mostrar ruta, link y nombre del link ',(done) => {
+        options.validate = false;
+        options.stats = false;
+        return mdlinks('exampleTests',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "exampleTests/exampleMD/testReadmeDos.md", "href": "https://developers.google.com/v8/", "text": "motor de JavaScript V8 de Chrome"}]);
+            done();
+        })
+    });
+    test ('Deberia permitir ingresar una ruta Directorio y mostrar mostrar --stats',(done) => {
+        options.validate = false;
+        options.stats = true;
+        return mdlinks('exampleTests',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "exampleTests/exampleMD/testReadmeDos.md", "href": "https://developers.google.com/v8/", "text": "motor de JavaScript V8 de Chrome"}, {"total": 7, "unique": 0}]);
+            done();
+        })
+    });
+    test ('Deberia permitir ingresar una ruta Directorio y mostrar mostrar --validate',(done) => {
+        options.validate = true;
+        options.stats = false;
+        return mdlinks('exampleTests',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "exampleTests/exampleMD/testReadmeDos.md", "href": "https://developers.google.com/v8/", "text": "motor de JavaScript V8 de Chrome"}, {"total": 7, "unique": 0}, {"file": "exampleTests/exampleMD/testReadmeDos.md", "href": "https://developers.google.com/v8/", "status": "OK", "text": "motor de JavaScript V8 de Chrome"}]);
+            done();
+        })
+    });
+    test ('Deberia permitir ingresar una ruta Directorio y mostrar mostrar --validate --stats',(done) => {
+        options.validate = true;
+        options.stats = true;
+        return mdlinks('exampleTests',options)
+        .then(data => {
+            expect(data).toEqual([{"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "text": "Markdown"}, {"total": 3, "unique": 0}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "testsEjemplo.md", "href": "https://es.wikipedia.org/wiki/Markdown", "status": "OK", "text": "Markdown"}, {"file": "exampleTests/exampleMD/testReadmeDos.md", "href": "https://developers.google.com/v8/", "text": "motor de JavaScript V8 de Chrome"}, {"total": 7, "unique": 0}, {"file": "exampleTests/exampleMD/testReadmeDos.md", "href": "https://developers.google.com/v8/", "status": "OK", "text": "motor de JavaScript V8 de Chrome"}, {"broken": 0, "total": 9, "unique": 0}]);
             done();
         })
     });

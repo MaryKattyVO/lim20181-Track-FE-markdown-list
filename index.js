@@ -28,11 +28,11 @@ const readFile = (route) => {
 	const pathAbsolute = convertAbsolute(route);
 	const statsFile = verificationRoute(pathAbsolute);
 	if (statsFile.isFile()) {
-		const exist = fileExists(pathAbsolute); 
+		const exist = fileExists(pathAbsolute);
 		if (exist) {
 			recorredFile(pathAbsolute, route);
 		}
-	} else if (statsFile.isDirectory()) { 
+	} else if (statsFile.isDirectory()) {
 		const files = verificationDir(pathAbsolute);
 
 		files.map((file) => {
@@ -45,7 +45,7 @@ const readFile = (route) => {
 const recorredFile = (route, nameFile) => {
 	const extension = validateMd(route);
 	if (extension === '.md') {
-		const information = getfileInformation(route);	
+		const information = getfileInformation(route);
 		const linesFile = information.split('\n');
 		loopInformationFile(linesFile, nameFile);
 	}
@@ -54,7 +54,7 @@ const recorredFile = (route, nameFile) => {
 //-------------------- Función para poder verificar extensión Md ----------------------------
 const validateMd = (file) => {
 	return path.extname(file);
-}; 
+};
 
 //-------------------- Función que verifica que existe archivo ------------------------------
 const fileExists = (files) => {
@@ -83,7 +83,7 @@ const loopInformationFile = (linesfile, file) => {
 
 //------------------- Función que permite buscar Urls ---------------------------------------------------
 const searchUrl = (lineFile, file) => {
-	
+
 	const urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
 
 	lineFile.replace(urlRegex, (urls) => {
@@ -91,8 +91,8 @@ const searchUrl = (lineFile, file) => {
 		//Permite validar si la url encontrada existe:
 		validateAllUrl(urls, urlText, file);
 		//Verifica si se repiten los urls:
-		if (link.indexOf(urls) === -1) { 
-				link.push(urls);
+		if (link.indexOf(urls) === -1) {
+			link.push(urls);
 		} else {
 			if (linkDuplex.indexOf(urls) === -1) {
 				linkDuplex.push(urls);
@@ -101,13 +101,13 @@ const searchUrl = (lineFile, file) => {
 	});
 	const lengthLink = link.length;
 	const lengthLinkDuplex = linkDuplex.length;
-	unique =  lengthLink - lengthLinkDuplex;
+	unique = lengthLink - lengthLinkDuplex;
 };
 
 //--------------------- Función que permite extraer el texto de los links -----------------------------
 const extractTextFlagUrl = (lines) => {
 	const urlLineText = lines.substring(
-		lines.lastIndexOf('[') + 1, 
+		lines.lastIndexOf('[') + 1,
 		lines.lastIndexOf(']')
 	);
 	return urlLineText;
@@ -116,38 +116,38 @@ const extractTextFlagUrl = (lines) => {
 //----------------------- Función que permite validar las Urls ------------------------
 const validateAllUrl = (url, text, file) => {
 	const promise = fetch(url)
-	.then((res) => {
-	
-		switch(res.statusText) {
-			case 'OK':
-				valid++;
-				break;
-			default:
-				broken++;
-				break;
-		}
-		
-		if (options.validate === true && options.stats === false) {
-			let result = {
-				href: url, 
-				text: text, 
-				file: file, 
-				status: res.statusText
-			};
-			results.push(result);
-		} else if (options.validate === false && options.stats === false) {
-			let result = {
-				href: url, 
-				text: text, 
-				file: file
-			};
-			results.push(result);
-		}
-		
-	})
-	.catch((error) => {
-		return error;
-	});
+		.then((res) => {
+
+			switch (res.statusText) {
+				case 'OK':
+					valid++;
+					break;
+				default:
+					broken++;
+					break;
+			}
+
+			if (options.validate === true && options.stats === false) {
+				let result = {
+					href: url,
+					text: text,
+					file: file,
+					status: res.statusText
+				};
+				results.push(result);
+			} else if (options.validate === false && options.stats === false) {
+				let result = {
+					href: url,
+					text: text,
+					file: file
+				};
+				results.push(result);
+			}
+
+		})
+		.catch((error) => {
+			return error;
+		});
 
 	promises.push(promise);
 };
@@ -158,27 +158,26 @@ const mdlinks = (route, option) => {
 		options = option;
 		readFile(route);
 		await Promise.all(promises)
-		.then(() => {
-			total = valid + broken;
+			.then(() => {
+				total = valid + broken;
 
-			if (options.validate === false && options.stats === true) {
-				let result = {
-					total: total, 
-					unique: unique
-				};
-				results.push(result);
-			} else if (options.validate === true && options.stats === true) {
-				let result = {
-					total: total, 
-					unique: unique, 
-					broken: broken
-				};
-				results.push(result);
-			}
-		});
+				if (options.validate === false && options.stats === true) {
+					let result = {
+						total: total,
+						unique: unique
+					};
+					results.push(result);
+				} else if (options.validate === true && options.stats === true) {
+					let result = {
+						total: total,
+						unique: unique,
+						broken: broken
+					};
+					results.push(result);
+				}
+			});
 
 		return resolve(results);
-		//console.log(resolve);
 	});
 };
 
