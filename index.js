@@ -4,12 +4,11 @@ const fetch = require('node-fetch');
 const path = require('path');
 
 let options = {};
-let total = 0;
 let valid = 0;
+let unique = 0;
 let broken = 0;
 const link = [];
 const linkDuplex = [];
-let unique = 0;
 const promises = [];
 const results = [];
 
@@ -22,6 +21,13 @@ const convertAbsolute = (route) => {
 const verificationRoute = (routeAbsolute) => {
 	return fs.statSync(routeAbsolute);
 }
+
+//-------------------- Función que verifica que existe archivo ------------------------------
+const fileExists = (files) => {
+	if (fs.existsSync(files)) {
+		return exist = true;
+	}
+};
 
 //--------------------- Función que permite leer archivo -------------------------------
 const readFile = (route) => {
@@ -54,13 +60,6 @@ const recorredFile = (route, nameFile) => {
 //-------------------- Función para poder verificar extensión Md ----------------------------
 const validateMd = (file) => {
 	return path.extname(file);
-};
-
-//-------------------- Función que verifica que existe archivo ------------------------------
-const fileExists = (files) => {
-	if (fs.existsSync(files)) {
-		return exist = true;
-	}
 };
 
 //-------------------- Función que verifica estado de directorio -----------------------------
@@ -115,9 +114,10 @@ const extractTextFlagUrl = (lines) => {
 
 //----------------------- Función que permite validar las Urls ------------------------
 const validateAllUrl = (url, text, file) => {
+	//Usamos fetch para poder trabajar con las url.
 	const promise = fetch(url)
 		.then((res) => {
-
+			//Verificamos si el estado de la Url.
 			switch (res.statusText) {
 				case 'OK':
 					valid++;
@@ -126,8 +126,7 @@ const validateAllUrl = (url, text, file) => {
 					broken++;
 					break;
 			}
-
-			if (options.validate === true && options.stats === false) {
+			if (options.validate && !options.stats) {
 				let result = {
 					href: url,
 					text: text,
@@ -135,7 +134,7 @@ const validateAllUrl = (url, text, file) => {
 					status: res.statusText
 				};
 				results.push(result);
-			} else if (options.validate === false && options.stats === false) {
+			} else if (!options.validate && !options.stats) {
 				let result = {
 					href: url,
 					text: text,
@@ -143,12 +142,10 @@ const validateAllUrl = (url, text, file) => {
 				};
 				results.push(result);
 			}
-
 		})
 		.catch((error) => {
 			return error;
 		});
-
 	promises.push(promise);
 };
 
@@ -157,17 +154,18 @@ const mdlinks = (route, option) => {
 	return new Promise(async (resolve, reject) => {
 		options = option;
 		readFile(route);
+		//Espera que la promesa se resuelva y devuelva su resultado.
 		await Promise.all(promises)
 			.then(() => {
+				let total = 0;
 				total = valid + broken;
-
-				if (options.validate === false && options.stats === true) {
+				if (!options.validate && options.stats) {
 					let result = {
 						total: total,
 						unique: unique
 					};
 					results.push(result);
-				} else if (options.validate === true && options.stats === true) {
+				} else if (options.validate && options.stats) {
 					let result = {
 						total: total,
 						unique: unique,
@@ -176,9 +174,7 @@ const mdlinks = (route, option) => {
 					results.push(result);
 				}
 			});
-
 		return resolve(results);
 	});
 };
-
 module.exports = mdlinks;
