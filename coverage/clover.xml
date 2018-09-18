@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <coverage generated="1537288462835" clover="3.2.0">
   <project timestamp="1537288462836" name="All files">
     <metrics statements="90" coveredstatements="87" conditionals="32" coveredconditionals="28" methods="19" coveredmethods="18" elements="141" coveredelements="133" complexity="0" loc="90" ncloc="90" packages="1" files="1" classes="1">
       <file name="index.js" path="C:\Users\makibirit\Documents\lim20181-Track-FE-markdown-list\index.js">
         <metrics statements="90" coveredstatements="87" conditionals="32" coveredconditionals="28" methods="19" coveredmethods="18"/>
+=======
+<coverage generated="1537227144418" clover="3.2.0">
+  <project timestamp="1537227144420" name="All files">
+    <metrics statements="90" coveredstatements="85" conditionals="32" coveredconditionals="26" methods="19" coveredmethods="17" elements="141" coveredelements="128" complexity="0" loc="90" ncloc="90" packages="1" files="1" classes="1">
+      <file name="index.js" path="C:\Users\Mary Vicuña\Documents\lim20181-Track-FE-markdown-list\index.js">
+        <metrics statements="90" coveredstatements="85" conditionals="32" coveredconditionals="26" methods="19" coveredmethods="17"/>
+>>>>>>> bdf2a21f825a181d08c03269bdc61383e0b6154b
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
@@ -17,6 +25,7 @@
         <line num="13" count="1" type="stmt"/>
         <line num="14" count="1" type="stmt"/>
         <line num="17" count="1" type="stmt"/>
+<<<<<<< HEAD
         <line num="18" count="22" type="stmt"/>
         <line num="22" count="1" type="stmt"/>
         <line num="23" count="22" type="stmt"/>
@@ -42,9 +51,37 @@
         <line num="60" count="1" type="stmt"/>
         <line num="61" count="14" type="cond" truecount="1" falsecount="1"/>
         <line num="62" count="14" type="stmt"/>
+=======
+        <line num="18" count="6" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="6" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="6" type="stmt"/>
+        <line num="29" count="6" type="stmt"/>
+        <line num="30" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="31" count="5" type="stmt"/>
+        <line num="32" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="5" type="stmt"/>
+        <line num="47" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="56" count="5" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="61" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="62" count="5" type="stmt"/>
+>>>>>>> bdf2a21f825a181d08c03269bdc61383e0b6154b
         <line num="67" count="1" type="stmt"/>
         <line num="68" count="8" type="stmt"/>
         <line num="72" count="1" type="stmt"/>
+<<<<<<< HEAD
         <line num="73" count="9" type="stmt"/>
         <line num="74" count="9" type="stmt"/>
         <line num="78" count="1" type="stmt"/>
@@ -94,6 +131,57 @@
         <line num="176" count="1" type="stmt"/>
         <line num="180" count="10" type="stmt"/>
         <line num="184" count="1" type="stmt"/>
+=======
+        <line num="73" count="5" type="stmt"/>
+        <line num="74" count="5" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="79" count="5" type="stmt"/>
+        <line num="80" count="330" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="87" count="330" type="stmt"/>
+        <line num="89" count="330" type="stmt"/>
+        <line num="90" count="30" type="stmt"/>
+        <line num="92" count="30" type="stmt"/>
+        <line num="94" count="30" type="cond" truecount="2" falsecount="0"/>
+        <line num="95" count="3" type="stmt"/>
+        <line num="97" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="98" count="3" type="stmt"/>
+        <line num="102" count="330" type="stmt"/>
+        <line num="103" count="330" type="stmt"/>
+        <line num="104" count="330" type="stmt"/>
+        <line num="108" count="1" type="stmt"/>
+        <line num="109" count="30" type="stmt"/>
+        <line num="113" count="30" type="stmt"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="118" count="30" type="stmt"/>
+        <line num="129" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="131" count="10" type="stmt"/>
+        <line num="132" count="10" type="stmt"/>
+        <line num="134" count="10" type="stmt"/>
+        <line num="135" count="10" type="stmt"/>
+        <line num="138" count="20" type="cond" truecount="4" falsecount="0"/>
+        <line num="139" count="4" type="stmt"/>
+        <line num="145" count="4" type="stmt"/>
+        <line num="146" count="16" type="cond" truecount="4" falsecount="0"/>
+        <line num="147" count="8" type="stmt"/>
+        <line num="152" count="8" type="stmt"/>
+        <line num="157" count="10" type="stmt"/>
+        <line num="160" count="30" type="stmt"/>
+        <line num="164" count="1" type="stmt"/>
+        <line num="165" count="6" type="stmt"/>
+        <line num="166" count="6" type="stmt"/>
+        <line num="167" count="6" type="stmt"/>
+        <line num="168" count="5" type="stmt"/>
+        <line num="170" count="5" type="stmt"/>
+        <line num="172" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="173" count="1" type="stmt"/>
+        <line num="177" count="1" type="stmt"/>
+        <line num="178" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="179" count="1" type="stmt"/>
+        <line num="184" count="1" type="stmt"/>
+        <line num="188" count="5" type="stmt"/>
+        <line num="192" count="1" type="stmt"/>
+>>>>>>> bdf2a21f825a181d08c03269bdc61383e0b6154b
       </file>
     </metrics>
   </project>

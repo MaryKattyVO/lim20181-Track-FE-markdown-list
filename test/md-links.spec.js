@@ -93,4 +93,14 @@ describe('mdlinks', () => {
             done();
         })
     });
+    test('Deberia permitir ingresar una ruta para la opcion --validate y mostrar file, href, status y textLink', (done) => {
+        options.stats = false;
+        options.validate = true;
+        return mdlinks('Readme.md', options)
+        .then(data => {
+            console.log(data);
+            expect(data).toEqual([{"file": "Readme.md", "href": "http://algo.com/2/3/", "text": ""}, {"file": "Readme.md", "href": "http://algo.com/2/3/", "text": ""}, {"file": "Readme.md", "href": "http://algo.com/2/3/", "text": ""}, {"file": "Readme.md", "href": "http://algo.com/2/3/", "text": ""}, {"file": "Readme.md", "href": "http://google.com/", "text": ""}, {"file": "Readme.md", "href": "http://google.com/", "text": ""}, {"file":
+            "Readme.md", "href": "http://google.com/", "text": ""}, {"file": "Readme.md", "href": "http://google.com/", "text": ""}, {"broken": 6, "total": 12, "unique": 0}, {"total": 16, "unique": 0}, {"file": "Readme.md", "href": "http://algo.com/2/3/", "status": "Not Found", "text": ""}, {"file": "Readme.md", "href": "http://algo.com/2/3/", "status": "Not Found", "text": ""}, {"file": "Readme.md", "href": "http://google.com/", "status": "OK", "text": ""}, {"file": "Readme.md", "href": "http://google.com/", "status": "OK", "text": ""}]);
+        })
+    })
 }) 
