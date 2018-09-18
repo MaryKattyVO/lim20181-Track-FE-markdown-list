@@ -66,7 +66,7 @@ describe('mdlinks', () => {
                 done();
             })
     });
-    test('Deberia permitir ingresar una ruta Directorio y mostrar mostrar ruta, link y nombre del link ', (done) => {
+    test('Deberia permitir ingresar una ruta Directorio y mostrar ruta, link y nombre del link ', (done) => {
         return mdlinks('exampleTests', options)
             .then(data => {
                 expect(data[0].file).toEqual('exampleTests/example.md');
@@ -75,7 +75,7 @@ describe('mdlinks', () => {
                 done();
             })
     });
-    test('Deberia permitir ingresar una ruta Directorio y mostrar mostrar --stats', (done) => {
+    test('Deberia permitir ingresar una ruta Directorio y mostrar --stats', (done) => {
         options.validate = false;
         options.stats = true;
         return mdlinks('exampleTests', options)
@@ -86,7 +86,7 @@ describe('mdlinks', () => {
                 done();
             })
     });
-    test('Deberia permitir ingresar una ruta Directorio y mostrar mostrar --validate', (done) => {
+    test('Deberia permitir ingresar una ruta Directorio y mostrar  --validate', (done) => {
         options.validate = true;
         options.stats = false;
         return mdlinks('exampleTests', options)
@@ -97,7 +97,7 @@ describe('mdlinks', () => {
                 done();
             })
     });
-    test('Deberia permitir ingresar una ruta Directorio y mostrar mostrar --validate --stats', (done) => {
+    test('Deberia permitir ingresar una ruta Directorio y mostrar --validate --stats', (done) => {
         options.validate = true;
         options.stats = true;
         return mdlinks('exampleTests', options)
