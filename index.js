@@ -117,15 +117,7 @@ const extractTextFlagUrl = (lines) => {
 const validateAllUrl = (url, text, file) => {
 	const promise = fetch(url)
 	.then((res) => {
-		
-		// if(res.statusText === 'OK'){
-		// 	valid++;
-			
-		// }
-		// else if(res.statusText === 'NOT FOUND'){
-		// 	broken++;
-			
-		// }
+	
 		switch(res.statusText) {
 			case 'OK':
 				valid++;
@@ -186,6 +178,7 @@ const mdlinks = (route, option) => {
 		});
 
 		return resolve(results);
+		//console.log(resolve);
 	});
 };
 
